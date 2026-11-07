@@ -1,0 +1,15 @@
+{
+  "name": "STEAM YADIKA — Portal Layanan",
+  "short_name": "STEAM YADIKA",
+  "description": "Portal pemesanan dan operasional layanan kendaraan SMK YADIKA 13.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#f5f6f2",
+  "theme_color": "#10251e",
+  "categories": ["business", "productivity"],
+  "icons": [
+    { "src": "./assets/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

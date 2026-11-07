@@ -1,0 +1,6 @@
+# Only public member registration bypasses JWT; admin account management requires a verified user JWT.
+[functions.register-member]
+verify_jwt = false
+
+[functions.manage-account]
+verify_jwt = true
