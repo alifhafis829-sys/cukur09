@@ -342,7 +342,7 @@ begin
   if p_method <> o.payment_method then raise exception 'Metode pembayaran tidak sesuai pilihan customer'; end if;
   if length(coalesce(p_note,'')) > 250 then raise exception 'Catatan transaksi maksimal 250 karakter'; end if;
   if exists(select 1 from public.order_items where order_id=p_order_id and price=0) then raise exception 'Admin harus menetapkan harga setiap layanan terlebih dahulu'; end if;
-  if coalesce(p_amount,0) <= 0 or p_amount <> o.total_amount then raise exception 'Nominal pembayaran harus sama dengan total pesanan ('||o.total_amount||')'; end if;
+  if coalesce(p_amount,0) <= 0 or p_amount <> o.total_amount then raise exception 'Nominal pembayaran harus sama dengan total pesanan'; end if;
   if o.payment_timing='Saat kunci dijemput' and o.status<>'Kunci diterima' then raise exception 'Pembayaran dijadwalkan saat kunci diterima petugas'; end if;
   if o.payment_timing='Setelah layanan selesai' and o.status<>'Menunggu pengambilan' then raise exception 'Pembayaran dijadwalkan saat customer mengambil motor'; end if;
   insert into public.payments(order_id,method,amount,received_by,note) values(p_order_id,p_method,p_amount,auth.uid(),nullif(trim(coalesce(p_note,'')),'')) returning id into payment_id;
@@ -512,17 +512,17 @@ begin
       select coalesce(jsonb_agg(jsonb_build_object('day',d.day::date,'orders',coalesce(o.n,0),'revenue',coalesce(pm.rev,0)) order by d.day),'[]'::jsonb)
       from generate_series(p_from::timestamp,p_to::timestamp,interval '1 day') as d(day)
       left join (
-        select (created_at at time zone 'Asia/Jakarta')::date day,count(*) n
+        select (created_at at time zone 'Asia/Jakarta')::date AS day,count(*) n
         from public.orders where created_at>=start_at and created_at<end_at
-        group by (created_at at time zone 'Asia/Jakarta')::date
+        group by (created_at at time zone 'Asia/Jakarta')::date 
       ) o on o.day=d.day::date
       left join (
         select day, sum(amount) as rev from (
-          select (received_at at time zone 'Asia/Jakarta')::date day, amount from public.payments where received_at>=start_at and received_at<end_at
+          select (received_at at time zone 'Asia/Jakarta')::date AS day, amount from public.payments where received_at>=start_at and received_at<end_at
           union all
-          select (refunded_at at time zone 'Asia/Jakarta')::date day, -amount as amount from public.refunds where refunded_at>=start_at and refunded_at<end_at
+          select (refunded_at at time zone 'Asia/Jakarta')::date AS day, -amount as amount from public.refunds where refunded_at>=start_at and refunded_at<end_at
         ) cashflow group by day
-      ) pm on pm.day=d.day::date
+      ) pm on pm.day=d.day::date AS
     )
   ) into result;
   return result;
@@ -669,4 +669,5 @@ create trigger services_audit_change
 after insert or update or delete on public.services
 for each row execute function public.log_service_catalog_change();
 revoke all on function public.log_service_catalog_change() from public, anon, authenticated;
+
 
