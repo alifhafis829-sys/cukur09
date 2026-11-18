@@ -1,1 +1,86 @@
 
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#10251e">
+  <meta name="description" content="Portal layanan perawatan kendaraan STEAM YADIKA — SMK YADIKA 13.">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; form-action 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://*.supabase.co wss://*.supabase.co; img-src 'self' data:; upgrade-insecure-requests">
+  <title>STEAM YADIKA — Portal Layanan</title>
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" href="./assets/icon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./config.js" defer></script>
+  <script src="./app.js" defer></script>
+</head>
+<body>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <section id="auth" class="auth-wrap">
+    <div class="auth-card">
+      <div class="brand-mark">S<span>Y</span></div>
+      <p class="eyebrow">SMK YADIKA 13 · PORTAL LAYANAN</p>
+      <h1>STEAM <span>YADIKA</span></h1>
+      <p class="muted intro">Layanan perawatan kendaraan sekolah, lebih tertata dan mudah dipantau.</p>
+      <div class="tabs" role="tablist" aria-label="Akses akun">
+        <button id="loginTab" class="active" type="button" role="tab">Masuk</button>
+        <button id="registerTab" type="button" role="tab">Daftar warga sekolah</button>
+      </div>
+      <form id="loginForm" class="auth-form">
+        <label>Nama pengguna<input id="loginUsername" autocomplete="username" required maxlength="32" placeholder="Contoh: hafis829"></label>
+        <label>Password<input id="loginPassword" type="password" autocomplete="current-password" required></label>
+        <button class="primary full" type="submit">Masuk ke STEAM <span>→</span></button>
+      </form>
+      <form id="registerForm" class="auth-form hidden">
+        <label>Nama lengkap<input id="regName" required maxlength="80" autocomplete="name"></label>
+        <label>Jenis warga sekolah<select id="regType" required><option value="student">Siswa</option><option value="teacher">Guru</option><option value="employee">Karyawan</option></select></label>
+        <label id="unitLabel">Kelas<input id="regClass" required maxlength="40" placeholder="Contoh: XII TKR 1"></label>
+        <label>Nama pengguna<input id="regUsername" required minlength="3" maxlength="32" pattern="[a-zA-Z0-9_.-]+" autocomplete="username" placeholder="Huruf, angka, titik, _ atau -"></label>
+        <label>Password<input id="regPassword" type="password" required minlength="10" maxlength="72" autocomplete="new-password"></label>
+        <label>Konfirmasi password<input id="regConfirm" type="password" required minlength="10" maxlength="72" autocomplete="new-password"></label>
+        <button class="primary full" type="submit">Buat akun warga sekolah <span>→</span></button>
+      </form>
+      <p class="auth-note">Akun baru perlu diverifikasi admin sebelum dapat memesan layanan. Akun petugas, admin, dan pimpinan dibuat oleh admin.</p>
+      <p class="auth-foot">© 2026 STEAM YADIKA · SMK YADIKA 13</p>
+    </div>
+  </section>
+
+  <section id="application" class="app-shell hidden">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebrand">
+        <div class="brand-mark small-mark">S<span>Y</span></div>
+        <div><b>STEAM YADIKA</b><small>SMART MOTOR SERVICE</small></div>
+      </div>
+      <div class="who">
+        <div class="avatar" id="userAvatar">S</div>
+        <div class="who-copy"><b id="userName"></b><small id="userRole"></small></div>
+      </div>
+      <nav id="nav" aria-label="Navigasi utama"></nav>
+      <div class="sidebar-bottom"><span class="system-dot"></span><span>Sistem layanan sekolah</span></div>
+      <button id="logout" class="logout" type="button"><span>↗</span> Keluar akun</button>
+    </aside>
+
+    <div id="overlay" class="overlay"></div>
+
+    <main class="main">
+      <header class="topbar">
+        <button id="menuBtn" class="icon-button menu-button" type="button" aria-label="Buka menu">☰</button>
+        <div class="page-heading"><p class="eyebrow">STEAM YADIKA <span>/</span> PORTAL</p><h2 id="heading">Dashboard</h2></div>
+        <button id="notificationBtn" class="icon-button notification-button" type="button" aria-label="Notifikasi">♧<span id="notificationCount" class="notification-count hidden">0</span></button>
+      </header>
+      <div id="view" class="view" aria-live="polite"></div>
+      <footer>© 2026 STEAM YADIKA · SMK YADIKA 13 <span>·</span> Portal layanan sekolah</footer>
+    </main>
+  </section>
+
+  <div id="modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-card"><button id="closeModal" class="modal-close" type="button" aria-label="Tutup">×</button><div id="modalBody"></div></div>
+  </div>
+</body>
+</html>
