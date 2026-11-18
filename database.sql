@@ -522,7 +522,7 @@ begin
           union all
           select (refunded_at at time zone 'Asia/Jakarta')::date AS day, -amount as amount from public.refunds where refunded_at>=start_at and refunded_at<end_at
         ) cashflow group by day
-      ) pm on pm.day=d.day::date AS
+      ) pm on pm.day=d.day::date 
     )
   ) into result;
   return result;
@@ -669,5 +669,4 @@ create trigger services_audit_change
 after insert or update or delete on public.services
 for each row execute function public.log_service_catalog_change();
 revoke all on function public.log_service_catalog_change() from public, anon, authenticated;
-
 
